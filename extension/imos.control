@@ -1,0 +1,5 @@
+# imos extension
+comment = 'general IMOS functionality'
+default_version = '1.0'
+module_pathname = '$libdir/imos'
+relocatable = true
