@@ -23,4 +23,3 @@ You can then run the test scripts from the command line using
 > pg_prove -d <database_name> test/extension/imos/*
 
 as the postgres user for example.
-
