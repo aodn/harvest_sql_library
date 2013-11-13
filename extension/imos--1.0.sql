@@ -88,6 +88,13 @@ $BODY$
 LANGUAGE plpgsql VOLATILE
 COST 100;
 
+
+CREATE AGGREGATE make_trajectory(Geometry) (
+    SFUNC = make_trajectory,
+    STYPE = Geometry
+)
+
+
 CREATE FUNCTION is_valid_point(point geometry)
 RETURNS boolean AS
 $$
