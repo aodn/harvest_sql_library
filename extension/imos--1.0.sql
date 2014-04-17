@@ -249,8 +249,8 @@ CREATE FUNCTION exec(text) returns text
 language plpgsql volatile
 AS $f$
     BEGIN
-      EXECUTE $1;
-      RETURN $1;
+    EXECUTE $1;
+    RETURN $1;
     END;
 $f$;
 grant all on function exec(text) to public;
@@ -259,41 +259,41 @@ grant all on function exec(text) to public;
 create function drop_objects_in_schema( schema text ) returns void
 language plpgsql volatile
 as $$
-  begin
-	perform exec( 'drop view if exists '||n.nspname||'.'||o.relname||' cascade' )
+    begin
+    perform exec( 'drop view if exists '||n.nspname||'.'||o.relname||' cascade' )
     from pg_class o
     left join pg_namespace n on n.oid=o.relnamespace
-	where o.relkind = 'v'
-	and n.nspname = $1;
+    where o.relkind = 'v'
+    and n.nspname = $1;
 
-	perform exec( 'alter table '||n.nspname||'.'||r.relname||' drop constraint if exists '||c.conname||' cascade' )
-	from pg_constraint c
-	left join pg_namespace n on n.oid = c.connamespace
-	left join pg_class r ON r.oid = c.conrelid
-	where n.nspname = $1;
+    perform exec( 'alter table '||n.nspname||'.'||r.relname||' drop constraint if exists '||c.conname||' cascade' )
+    from pg_constraint c
+    left join pg_namespace n on n.oid = c.connamespace
+    left join pg_class r ON r.oid = c.conrelid
+    where n.nspname = $1;
 
-	perform exec( 'drop index if exists '||n.nspname||'.'||o.relname||' cascade' )
+    perform exec( 'drop index if exists '||n.nspname||'.'||o.relname||' cascade' )
     from pg_class o
     left join pg_namespace n on n.oid = o.relnamespace
-	where o.relkind = 'i'
-	and n.nspname = $1;
+    where o.relkind = 'i'
+    and n.nspname = $1;
 
-	perform exec( 'drop table if exists '||n.nspname||'.'||o.relname||' cascade' )
+    perform exec( 'drop table if exists '||n.nspname||'.'||o.relname||' cascade' )
     from pg_class o
     left join pg_namespace n on n.oid = o.relnamespace
-	where o.relkind = 'r'
-	and n.nspname = $1;
+    where o.relkind = 'r'
+    and n.nspname = $1;
 
-	perform exec( 'drop sequence if exists '||n.nspname||'.'||o.relname|| ' cascade' )
+    perform exec( 'drop sequence if exists '||n.nspname||'.'||o.relname|| ' cascade' )
     from pg_class o
     left join pg_namespace n on n.oid = o.relnamespace
-	where o.relkind = 'S'
-	and n.nspname = $1;
+    where o.relkind = 'S'
+    and n.nspname = $1;
 
-	perform exec( 'drop function if exists '||p.oid::regproc||'('||pg_get_function_identity_arguments( p.oid)||')'||' cascade' )
+    perform exec( 'drop function if exists '||p.oid::regproc||'('||pg_get_function_identity_arguments( p.oid)||')'||' cascade' )
     FROM pg_proc p
     left join pg_namespace n ON n.oid = p.pronamespace
-	where n.nspname = $1;
-  end;
+    where n.nspname = $1;
+    end;
 $$;
 
