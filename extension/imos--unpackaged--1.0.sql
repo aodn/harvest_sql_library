@@ -12,10 +12,13 @@ ALTER EXTENSION "imos" ADD function make_shortest_line();
 
 -- Legacy
 ALTER EXTENSION "imos" ADD function MakePoint(float8, float8);
-ALTER EXTENSION "imos" ADD function MakePoint(float8, float8, float8); 
+ALTER EXTENSION "imos" ADD function MakePoint(float8, float8, float8);
 ALTER EXTENSION "imos" ADD function MakePoint(float8, float8, float8, float8);
 
-ALTER EXTENSION "imos" ADD function GeomFromText(text, int4); 
-ALTER EXTENSION "imos" ADD function GeomFromText(text); 
+ALTER EXTENSION "imos" ADD function GeomFromText(text, int4);
+ALTER EXTENSION "imos" ADD function GeomFromText(text);
 
+-- Schema management
+ALTER EXTENSION "imos" ADD function exec(schema text);
+ALTER EXTENSION "imos" ADD function drop_objects_in_schema(schema text);
 
