@@ -208,6 +208,78 @@ $BODY$
 LANGUAGE plpgsql VOLATILE
 COST 100;
 
+-- Function to return a set of cells created by dividing a specified region into a a specified cell size 
+-- Refer http://gis.stackexchange.com/questions/16374/how-to-create-a-regular-polygon-grid-in-postgis
+
+CREATE FUNCTION st_createfishnet(p_nrow integer, p_ncol integer, p_xsize double precision, p_ysize double precision, p_x0 double precision DEFAULT 0, p_y0 double precision DEFAULT 0, p_srid integer DEFAULT 4326, OUT "row" integer, OUT col integer, OUT cell geometry)
+  RETURNS SETOF record AS
+$BODY$
+BEGIN
+    RETURN QUERY (
+      SELECT i + 1 AS row, j + 1 AS col, ST_Translate(geom, j * p_xsize + p_x0, i * p_ysize + p_y0) AS cell
+        FROM generate_series(0, p_nrow - 1) AS i,
+             generate_series(0, p_ncol - 1) AS j,
+             (
+               SELECT st_setsrid(('POLYGON((0 0, 0 '||p_ysize||', '||p_xsize||' '||p_ysize||', '||p_xsize||' 0,0 0))')::geometry, p_srid) AS geom
+             ) AS foo
+    );
+END
+$BODY$
+LANGUAGE plpgsql IMMUTABLE STRICT;
+
+-- Function to return a set of cells for the world divided up into a grid of a requested resolution 
+
+CREATE FUNCTION create_grid_cells(p_resolution double precision, OUT "row" integer, OUT col integer, OUT cell geometry)
+  RETURNS SETOF record AS
+$BODY$
+BEGIN
+    RETURN QUERY (
+      SELECT fishnet."row", fishnet.col, fishnet.cell
+        FROM st_createfishnet((180/p_resolution)::integer, (360/p_resolution)::integer, p_resolution, p_resolution, -180, -90) AS fishnet
+    );
+END
+$BODY$
+LANGUAGE plpgsql IMMUTABLE STRICT;
+
+-- Function to return a bounding polygon of a column in a table to the specified spatial resolution
+-- Formed by dividing the world up into the specified cell size, identifying cells containing data 
+-- and creating an aggregated multi-polygon from these cells removing common boundaries.
+
+CREATE FUNCTION BoundingPolygon(p_schema_name text, p_table_name text, p_column_name text, p_resolution double precision)
+    RETURNS geometry AS
+$BODY$
+DECLARE
+    result text;
+BEGIN
+    -- Create bounding polygon by finding grid cells that intersect at least one geometry in the 
+    -- specified table, aggregating them into one multi-polygon and removing any common boundaries using st_union
+
+    EXECUTE 'SELECT st_union(cell)
+               FROM create_grid_cells('||p_resolution||') AS grid_cell
+              WHERE exists (
+                  SELECT true
+                    FROM '||p_schema_name||'.'||p_table_name||'
+                   WHERE '||p_column_name||' && grid_cell.cell
+                     AND st_intersects('||p_column_name||', grid_cell.cell)
+                   LIMIT 1
+              )'
+    INTO result;
+
+    RETURN result;
+END;
+$BODY$
+LANGUAGE plpgsql; 
+
+-- Function to return a bounding polygon as gml 3
+
+CREATE FUNCTION BoundingPolygonAsGml3(p_schema_name text, p_table_name text, p_column_name text, p_resolution double precision)
+    RETURNS text AS
+$BODY$
+BEGIN
+    RETURN ST_AsGml(3, BoundingPolygon(p_schema_name, p_table_name, p_column_name, p_resolution));
+END;
+$BODY$
+LANGUAGE plpgsql; 
 
 -- Legacy from postgis-2.0/legacy.sql
 
