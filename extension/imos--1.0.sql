@@ -252,9 +252,10 @@ DECLARE
     result text;
 BEGIN
     -- Create bounding polygon by finding grid cells that intersect at least one geometry in the 
-    -- specified table, aggregating them into one multi-polygon and removing any common boundaries using st_union
+    -- specified table, aggregating them into one multi-polygon, removing any common boundaries using st_union
+    -- and then simplifying (joining line segments that can be joined without changing the shape of the polygon)
 
-    EXECUTE 'SELECT st_union(cell)
+    EXECUTE 'SELECT st_simplify(st_union(cell), 0)
                FROM create_grid_cells('||p_resolution||') AS grid_cell
               WHERE exists (
                   SELECT true

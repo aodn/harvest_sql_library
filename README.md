@@ -20,6 +20,6 @@ and then in the database where you would like to run your test scripts, run the 
 
 You can then run the test scripts from the command line using
 
-> pg_prove -d <database_name> test/extension/imos/*
+> pg_prove -d &lt;database_name&gt; test/extension/imos/*
 
 as the postgres user for example.
