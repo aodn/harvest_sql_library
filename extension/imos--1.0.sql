@@ -287,21 +287,21 @@ LANGUAGE plpgsql;
 -- Deprecation in 1.2.3
 CREATE FUNCTION MakePoint(float8, float8)
     RETURNS geometry
-    AS '$libdir/postgis-2.0', 'LWGEOM_makepoint'
+    AS '$libdir/postgis-2.1', 'LWGEOM_makepoint'
     LANGUAGE 'c' IMMUTABLE STRICT;
 
 
 -- Deprecation in 1.2.3
 CREATE FUNCTION MakePoint(float8, float8, float8)
     RETURNS geometry
-    AS '$libdir/postgis-2.0', 'LWGEOM_makepoint'
+    AS '$libdir/postgis-2.1', 'LWGEOM_makepoint'
     LANGUAGE 'c' IMMUTABLE STRICT;
 
 
 -- Deprecation in 1.2.3
 CREATE FUNCTION MakePoint(float8, float8, float8, float8)
     RETURNS geometry
-    AS '$libdir/postgis-2.0', 'LWGEOM_makepoint'
+    AS '$libdir/postgis-2.1', 'LWGEOM_makepoint'
     LANGUAGE 'c' IMMUTABLE STRICT;
 
 
