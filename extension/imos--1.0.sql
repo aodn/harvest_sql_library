@@ -286,7 +286,7 @@ BEGIN
         GML_3_1_1, 
         BoundingPolygon(p_schema_name, p_table_name, p_column_name, p_resolution),
         MAX_DECIMAL_DIGITS,
-        LONG_CRS_NAME + LAT_LON_ORDERING
+        LONG_CRS_NAME | LAT_LON_ORDERING
     );
 END;
 $BODY$
