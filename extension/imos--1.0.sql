@@ -277,7 +277,7 @@ CREATE FUNCTION BoundingPolygonAsGml3(p_schema_name text, p_table_name text, p_c
     RETURNS text AS
 $BODY$
 BEGIN
-    RETURN ST_AsGml(3, BoundingPolygon(p_schema_name, p_table_name, p_column_name, p_resolution));
+    RETURN ST_AsGml(3, BoundingPolygon(p_schema_name, p_table_name, p_column_name, p_resolution), 15, 17);
 END;
 $BODY$
 LANGUAGE plpgsql; 
