@@ -22,7 +22,7 @@ SELECT plan(2);
 
 SELECT is( 
     BoundingPolygonAsGml3(current_schema, 'test_data', 'position', 1),
-    '<gml:MultiSurface srsName="urn:ogc:def:crs:EPSG::4326"><gml:surfaceMember><gml:Polygon><gml:exterior><gml:LinearRing><gml:posList srsDimension="2">41 1 42 1 42 2 41 2 41 1</gml:posList></gml:LinearRing></gml:exterior></gml:Polygon></gml:surfaceMember><gml:surfaceMember><gml:Polygon><gml:exterior><gml:LinearRing><gml:posList srsDimension="2">43 7 44 7 44 8 43 8 43 7</gml:posList></gml:LinearRing></gml:exterior></gml:Polygon></gml:surfaceMember><gml:surfaceMember><gml:Polygon><gml:exterior><gml:LinearRing><gml:posList srsDimension="2">44 3 45 3 45 4 46 4 46 5 44 5 44 3</gml:posList></gml:LinearRing></gml:exterior></gml:Polygon></gml:surfaceMember></gml:MultiSurface>',
+    '<gml:MultiSurface srsName="EPSG:4326"><gml:surfaceMember><gml:Polygon><gml:exterior><gml:LinearRing><gml:posList srsDimension="2">1 41 1 42 2 42 2 41 1 41</gml:posList></gml:LinearRing></gml:exterior></gml:Polygon></gml:surfaceMember><gml:surfaceMember><gml:Polygon><gml:exterior><gml:LinearRing><gml:posList srsDimension="2">7 43 7 44 8 44 8 43 7 43</gml:posList></gml:LinearRing></gml:exterior></gml:Polygon></gml:surfaceMember><gml:surfaceMember><gml:Polygon><gml:exterior><gml:LinearRing><gml:posList srsDimension="2">3 44 3 45 4 45 4 46 5 46 5 44 3 44</gml:posList></gml:LinearRing></gml:exterior></gml:Polygon></gml:surfaceMember></gml:MultiSurface>',
     'Should make 3 polygons at 1 degree resolution'
 );
 
@@ -30,7 +30,7 @@ SELECT is(
 
 SELECT is( 
     BoundingPolygonAsGml3(current_schema, 'test_data', 'position', 10),
-    '<gml:Polygon srsName="urn:ogc:def:crs:EPSG::4326"><gml:exterior><gml:LinearRing><gml:posList srsDimension="2">40 0 50 0 50 10 40 10 40 0</gml:posList></gml:LinearRing></gml:exterior></gml:Polygon>',
+    '<gml:Polygon srsName="EPSG:4326"><gml:exterior><gml:LinearRing><gml:posList srsDimension="2">0 40 0 50 10 50 10 40 0 40</gml:posList></gml:LinearRing></gml:exterior></gml:Polygon>',
     'Should make 1 polygon at 10 degree resolution'
 );
 
