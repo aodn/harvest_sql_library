@@ -28,6 +28,19 @@ END; $$
 LANGUAGE plpgsql VOLATILE
 COST 100;
 
+
+CREATE FUNCTION format_name_test(p_name character)
+RETURNS character AS
+$$ DECLARE
+    parts text[];
+BEGIN
+    select into parts (regexp_matches(initcap(p_name), '(.*)[ ,.]([a-zA-Z-]+)'));
+    return (select parts[2]||', '||parts[1]);
+END; $$
+LANGUAGE plpgsql VOLATILE
+COST 100;
+
+
 -- Function to add a point to a linestring splitting the resulting line
 -- at the anti-meridian if that is the shortest path from the endpoint of the
 -- linestring to the point

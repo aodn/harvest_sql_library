@@ -6,6 +6,7 @@
 -- Harvester
 ALTER EXTENSION "imos" ADD function getendtoken();
 ALTER EXTENSION "imos" ADD function format_name();
+ALTER EXTENSION "imos" ADD function format_name_test();
 ALTER EXTENSION "imos" ADD function add_point_shortest();
 ALTER EXTENSION "imos" ADD function make_trajectory();
 ALTER EXTENSION "imos" ADD function make_shortest_line();
