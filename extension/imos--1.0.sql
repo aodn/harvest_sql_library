@@ -276,18 +276,8 @@ LANGUAGE plpgsql;
 CREATE FUNCTION BoundingPolygonAsGml3(p_schema_name text, p_table_name text, p_column_name text, p_resolution double precision)
     RETURNS text AS
 $BODY$
-DECLARE
-    GML_3_1_1 CONSTANT integer := 3; -- gml version
-    MAX_DECIMAL_DIGITS CONSTANT integer := 15;  -- the default
-    LONG_CRS_NAME CONSTANT integer := 1; -- use long crs names so that urn version of crs is used which unambiguously defines cord ordering as lat/lon
-    LAT_LON_ORDERING CONSTANT integer := 16;
 BEGIN
-    RETURN ST_AsGml(
-        GML_3_1_1, 
-        BoundingPolygon(p_schema_name, p_table_name, p_column_name, p_resolution),
-        MAX_DECIMAL_DIGITS,
-        LONG_CRS_NAME | LAT_LON_ORDERING
-    );
+    RETURN ST_AsGml(3, BoundingPolygon(p_schema_name, p_table_name, p_column_name, p_resolution));
 END;
 $BODY$
 LANGUAGE plpgsql; 
