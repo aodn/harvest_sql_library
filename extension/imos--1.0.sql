@@ -272,12 +272,17 @@ $BODY$
 LANGUAGE plpgsql; 
 
 -- Function to return a bounding polygon as gml 3
+-- Use CRS:84 with lon/lat ordering rather than default EPSG:4326 with incorrect lon/lat ordering
 
 CREATE FUNCTION BoundingPolygonAsGml3(p_schema_name text, p_table_name text, p_column_name text, p_resolution double precision)
     RETURNS text AS
 $BODY$
+DECLARE
+    GML_3_1_1 CONSTANT integer := 3; -- GML version
+    boundingPolygonAsGml text;
 BEGIN
-    RETURN ST_AsGml(3, BoundingPolygon(p_schema_name, p_table_name, p_column_name, p_resolution));
+    boundingPolygonAsGml := ST_AsGml(GML_3_1_1, BoundingPolygon(p_schema_name, p_table_name, p_column_name, p_resolution));
+    RETURN replace(boundingPolygonAsGml, 'EPSG:4326', 'CRS:84');
 END;
 $BODY$
 LANGUAGE plpgsql; 
