@@ -271,6 +271,28 @@ END;
 $BODY$
 LANGUAGE plpgsql; 
 
+-- Function to add ids to polygons in provided gml
+
+CREATE FUNCTION add_id_to_polygons( p_gml text )
+  RETURNS text AS
+$BODY$
+DECLARE
+    parts text[];
+    result text;
+BEGIN
+    result := '';
+    parts := regexp_split_to_array(p_gml, '<gml:Polygon');
+
+    FOR i IN 1..array_length(parts, 1)-1 LOOP
+        result := result||parts[i]||'<gml:Polygon gml:id="polygon'||i||'"';
+    END LOOP;
+
+    result := result||parts[array_length(parts, 1)];
+    RETURN result;
+END;
+$BODY$
+  LANGUAGE plpgsql;
+
 -- Function to return a bounding polygon as gml 3
 -- Use CRS:84 with lon/lat ordering rather than default EPSG:4326 with incorrect lon/lat ordering
 
@@ -282,6 +304,7 @@ DECLARE
     boundingPolygonAsGml text;
 BEGIN
     boundingPolygonAsGml := ST_AsGml(GML_3_1_1, BoundingPolygon(p_schema_name, p_table_name, p_column_name, p_resolution));
+    boundingPolygonAsGml := add_id_to_polygons(boundingPolygonAsGml);
     RETURN replace(boundingPolygonAsGml, 'EPSG:4326', 'CRS:84');
 END;
 $BODY$
