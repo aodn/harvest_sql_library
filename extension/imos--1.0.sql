@@ -280,6 +280,10 @@ DECLARE
     parts text[];
     result text;
 BEGIN
+    IF (p_gml is null) THEN
+        RETURN null;
+    END IF;
+
     result := '';
     parts := regexp_split_to_array(p_gml, '<gml:Polygon');
 
