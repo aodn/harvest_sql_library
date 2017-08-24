@@ -399,3 +399,10 @@ as $$
     end;
 $$;
 
+-- Run pg_stat_activity as superuser for non-superusers so they can see queries being executed by other users
+create function database_activity() returns setof pg_catalog.pg_stat_activity
+language sql 
+volatile
+security definer
+as $$ SELECT * FROM pg_catalog.pg_stat_activity; $$;
+
