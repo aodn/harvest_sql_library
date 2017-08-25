@@ -22,3 +22,6 @@ ALTER EXTENSION "imos" ADD function GeomFromText(text);
 ALTER EXTENSION "imos" ADD function exec(schema text);
 ALTER EXTENSION "imos" ADD function drop_objects_in_schema(schema text);
 
+-- Utility
+ALTER EXTENSION "imos" ADD function database_activity();
+
