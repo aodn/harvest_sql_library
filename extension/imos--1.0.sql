@@ -146,10 +146,10 @@ DECLARE
     meridian_intersection GEOMETRY;
     meridian_intersection_unshifted GEOMETRY;
 BEGIN
-    SELECT INTO shifted st_shift_longitude(st_makeline(pointa, pointb));
-    SELECT INTO pointashifted st_shift_longitude(pointa);
-    SELECT INTO pointbshifted st_shift_longitude(pointb);
-    SELECT INTO meridian_intersection st_line_interpolate_point(shifted, (180 - st_x(pointashifted)) / (st_x(pointbshifted) - st_x(pointashifted)));
+    SELECT INTO shifted ST_ShiftLongitude(st_makeline(pointa, pointb));
+    SELECT INTO pointashifted ST_ShiftLongitude(pointa);
+    SELECT INTO pointbshifted ST_ShiftLongitude(pointb);
+    SELECT INTO meridian_intersection ST_Line_InterpolatePoint(shifted, (180 - st_x(pointashifted)) / (st_x(pointbshifted) - st_x(pointashifted)));
     SELECT INTO meridian_intersection_unshifted st_translate(meridian_intersection, -360, 0);
 
     IF (st_x(pointa) < 0) THEN
