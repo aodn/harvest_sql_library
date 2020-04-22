@@ -1,11 +1,11 @@
-/* contrib/imos/imos--1.1.sql */
+/* contrib/imos/imos--1.0--1.1.sql */
 
 -- complain if script is sourced in psql, rather than via CREATE EXTENSION
 \echo Use "CREATE EXTENSION imos" to load this file. \quit
 
 -- Harvester support
 
-CREATE FUNCTION public.getendtoken(p_string character, p_regexp character, p_n integer)
+CREATE or REPLACE FUNCTION public.getendtoken(p_string character, p_regexp character, p_n integer)
 RETURNS character AS
 $$ DECLARE
 	tokens text[];
@@ -17,7 +17,7 @@ LANGUAGE plpgsql VOLATILE
 COST 100;
 
 
-CREATE FUNCTION public.format_name(p_name character)
+CREATE or REPLACE FUNCTION public.format_name(p_name character)
 RETURNS character AS
 $$ DECLARE
     parts text[];
@@ -33,7 +33,7 @@ COST 100;
 -- linestring to the point
 -- NOTE: assumes points should never be more than 180 degrees longitude apart
 
-CREATE FUNCTION public.add_point_shortest(linestring geometry, point geometry)
+CREATE or REPLACE FUNCTION public.add_point_shortest(linestring geometry, point geometry)
 RETURNS geometry AS
 $BODY$ DECLARE
     next_segment GEOMETRY;
@@ -59,7 +59,7 @@ LANGUAGE plpgsql VOLATILE
 COST 100;
 
 
-CREATE FUNCTION public.make_trajectory(accum geometry, point geometry)
+CREATE or REPLACE FUNCTION public.make_trajectory(accum geometry, point geometry)
 RETURNS geometry AS
 $BODY$ DECLARE
     result GEOMETRY;
@@ -95,7 +95,7 @@ CREATE AGGREGATE public.make_trajectory(Geometry) (
 );
 
 
-CREATE FUNCTION public.is_valid_point(point geometry)
+CREATE or REPLACE FUNCTION public.is_valid_point(point geometry)
 RETURNS boolean AS
 $$
 BEGIN
@@ -109,7 +109,7 @@ $$
 LANGUAGE plpgsql VOLATILE
 COST 100;
 
-CREATE FUNCTION public.make_point_or_shortest_line(pointa geometry, pointb geometry)
+CREATE or REPLACE FUNCTION public.make_point_or_shortest_line(pointa geometry, pointb geometry)
 RETURNS geometry AS
 $$
 BEGIN
@@ -135,7 +135,7 @@ COST 100;
 -- Function to create a multilinestring representing the line joining two points
 -- across the anti-meridian
 
-CREATE FUNCTION public.make_line_crossing_antimeridian(pointa geometry, pointb geometry)
+CREATE or REPLACE FUNCTION public.make_line_crossing_antimeridian(pointa geometry, pointb geometry)
   RETURNS geometry AS
 $BODY$
 DECLARE
@@ -168,7 +168,7 @@ COST 100;
 -- at the anti-meridian if that is the shortest path
 -- NOTE: assumes points should never be more than 180 degrees longitude apart
 
-CREATE FUNCTION public.make_shortest_line(pointa geometry, pointb geometry)
+CREATE or REPLACE FUNCTION public.make_shortest_line(pointa geometry, pointb geometry)
 RETURNS geometry AS
 $BODY$
 DECLARE
@@ -211,7 +211,7 @@ COST 100;
 -- Function to return a set of cells created by dividing a specified region into a a specified cell size 
 -- Refer http://gis.stackexchange.com/questions/16374/how-to-create-a-regular-polygon-grid-in-postgis
 
-CREATE FUNCTION public.st_createfishnet(p_nrow integer, p_ncol integer, p_xsize double precision, p_ysize double precision, p_x0 double precision DEFAULT 0, p_y0 double precision DEFAULT 0, p_srid integer DEFAULT 4326, OUT "row" integer, OUT col integer, OUT cell geometry)
+CREATE or REPLACE FUNCTION public.st_createfishnet(p_nrow integer, p_ncol integer, p_xsize double precision, p_ysize double precision, p_x0 double precision DEFAULT 0, p_y0 double precision DEFAULT 0, p_srid integer DEFAULT 4326, OUT "row" integer, OUT col integer, OUT cell geometry)
   RETURNS SETOF record AS
 $BODY$
 BEGIN
@@ -229,7 +229,7 @@ LANGUAGE plpgsql IMMUTABLE STRICT;
 
 -- Function to return a set of cells for the world divided up into a grid of a requested resolution 
 
-CREATE FUNCTION public.create_grid_cells(p_resolution double precision, OUT "row" integer, OUT col integer, OUT cell geometry)
+CREATE or REPLACE FUNCTION public.create_grid_cells(p_resolution double precision, OUT "row" integer, OUT col integer, OUT cell geometry)
   RETURNS SETOF record AS
 $BODY$
 BEGIN
@@ -245,7 +245,7 @@ LANGUAGE plpgsql IMMUTABLE STRICT;
 -- Formed by dividing the world up into the specified cell size, identifying cells containing data 
 -- and creating an aggregated multi-polygon from these cells removing common boundaries.
 
-CREATE FUNCTION public.BoundingPolygon(p_schema_name text, p_table_name text, p_column_name text, p_resolution double precision)
+CREATE or REPLACE FUNCTION public.BoundingPolygon(p_schema_name text, p_table_name text, p_column_name text, p_resolution double precision)
     RETURNS geometry AS
 $BODY$
 DECLARE
@@ -273,7 +273,7 @@ LANGUAGE plpgsql;
 
 -- Function to add ids to polygons in provided gml
 
-CREATE FUNCTION public.add_id_to_polygons( p_gml text )
+CREATE or REPLACE FUNCTION public.add_id_to_polygons( p_gml text )
   RETURNS text AS
 $BODY$
 DECLARE
@@ -300,7 +300,7 @@ $BODY$
 -- Function to return a bounding polygon as gml 3
 -- Use CRS:84 with lon/lat ordering rather than default EPSG:4326 with incorrect lon/lat ordering
 
-CREATE FUNCTION public.BoundingPolygonAsGml3(p_schema_name text, p_table_name text, p_column_name text, p_resolution double precision)
+CREATE or REPLACE FUNCTION public.BoundingPolygonAsGml3(p_schema_name text, p_table_name text, p_column_name text, p_resolution double precision)
     RETURNS text AS
 $BODY$
 DECLARE
@@ -317,37 +317,37 @@ LANGUAGE plpgsql;
 -- Legacy from postgis-2.0/legacy.sql
 
 -- Deprecation in 1.2.3
-CREATE FUNCTION public.MakePoint(float8, float8)
+CREATE or REPLACE FUNCTION public.MakePoint(float8, float8)
     RETURNS geometry AS 'SELECT ST_MakePoint($1, $2)'
     LANGUAGE 'sql' IMMUTABLE STRICT;
 
 
 -- Deprecation in 1.2.3
-CREATE FUNCTION public.MakePoint(float8, float8, float8)
+CREATE or REPLACE FUNCTION public.MakePoint(float8, float8, float8)
     RETURNS geometry AS 'SELECT ST_MakePoint($1, $2, $3)'
     LANGUAGE 'sql' IMMUTABLE STRICT;
 
 
 -- Deprecation in 1.2.3
-CREATE FUNCTION public.MakePoint(float8, float8, float8, float8)
+CREATE or REPLACE FUNCTION public.MakePoint(float8, float8, float8, float8)
     RETURNS geometry AS 'SELECT ST_MakePoint($1, $2, $3, $4)'
     LANGUAGE 'sql' IMMUTABLE STRICT;
 
 
 -- Deprecation in 1.2.3
-CREATE FUNCTION public.GeomFromText(text, int4)
+CREATE or REPLACE FUNCTION public.GeomFromText(text, int4)
     RETURNS geometry AS 'SELECT ST_GeomFromText($1, $2)'
     LANGUAGE 'sql' IMMUTABLE STRICT;
 
 
 -- Deprecation in 1.2.3
-CREATE FUNCTION public.GeomFromText(text)
+CREATE or REPLACE FUNCTION public.GeomFromText(text)
     RETURNS geometry AS 'SELECT ST_GeomFromText($1)'
     LANGUAGE 'sql' IMMUTABLE STRICT;
 
 
 -- Schema management
-CREATE FUNCTION public.exec(text) returns text
+CREATE or REPLACE FUNCTION public.exec(text) returns text
 language plpgsql volatile
 AS $f$
     BEGIN
@@ -358,7 +358,7 @@ $f$;
 grant all on function public.exec(text) to public;
 
 
-CREATE FUNCTION public.drop_objects_in_schema( schema text ) returns void
+CREATE or REPLACE FUNCTION public.drop_objects_in_schema( schema text ) returns void
 language plpgsql volatile
 as $$
     begin
@@ -400,7 +400,7 @@ as $$
 $$;
 
 -- Run pg_stat_activity as superuser for non-superusers so they can see queries being executed by other users
-CREATE FUNCTION public.database_activity() returns setof pg_catalog.pg_stat_activity
+CREATE or REPLACE FUNCTION public.database_activity() returns setof pg_catalog.pg_stat_activity
 language sql 
 volatile
 security definer
