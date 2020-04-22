@@ -1,6 +1,6 @@
 # imos extension
 comment = 'general IMOS functionality'
-default_version = '1.0'
+default_version = '1.1'
 module_pathname = '$libdir/imos'
 relocatable = true
 requires = 'postgis'

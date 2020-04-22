@@ -1,4 +1,4 @@
-/* contrib/imos/imos--1.0.sql */
+/* contrib/imos/imos--1.1.sql */
 
 -- complain if script is sourced in psql, rather than via CREATE EXTENSION
 \echo Use "CREATE EXTENSION imos" to load this file. \quit
