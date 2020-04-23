@@ -89,13 +89,13 @@ LANGUAGE plpgsql VOLATILE
 COST 100;
 
 
-CREATE AGGREGATE public.make_trajectory(Geometry) (
+CREATE OR REPLACE AGGREGATE public.make_trajectory(Geometry) (
     SFUNC = public.make_trajectory,
     STYPE = Geometry
 );
 
 
-CREATE or REPLACE FUNCTION public.is_valid_point(point geometry)
+CREATE OR REPLACE FUNCTION public.is_valid_point(point geometry)
 RETURNS boolean AS
 $$
 BEGIN
