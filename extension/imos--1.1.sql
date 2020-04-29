@@ -1,4 +1,4 @@
-/* contrib/imos/imos--1.0.sql */
+/* contrib/imos/imos--1.1.sql */
 
 -- complain if script is sourced in psql, rather than via CREATE EXTENSION
 \echo Use "CREATE EXTENSION imos" to load this file. \quit
@@ -14,7 +14,8 @@ BEGIN
     return (select tokens[array_length(tokens,1)- p_n  + 1]);
 END; $$
 LANGUAGE plpgsql VOLATILE
-COST 100;
+COST 100
+SET search_path = 'public';
 
 
 CREATE FUNCTION format_name(p_name character)
@@ -26,7 +27,8 @@ BEGIN
     return (select parts[2]||', '||parts[1]);
 END; $$
 LANGUAGE plpgsql VOLATILE
-COST 100;
+COST 100
+SET search_path = 'public';
 
 -- Function to add a point to a linestring splitting the resulting line
 -- at the anti-meridian if that is the shortest path from the endpoint of the
@@ -36,7 +38,7 @@ COST 100;
 CREATE FUNCTION add_point_shortest(linestring geometry, point geometry)
 RETURNS geometry AS
 $BODY$ DECLARE
-    next_segment public.GEOMETRY;
+    next_segment GEOMETRY;
 BEGIN
     IF ((linestring is null) or (st_geometrytype(linestring)<>'ST_LineString') or (NOT is_valid_point(point))) THEN
         RETURN null;
@@ -56,13 +58,14 @@ BEGIN
 END;
 $BODY$
 LANGUAGE plpgsql VOLATILE
-COST 100;
+COST 100
+SET search_path = 'public';
 
 
 CREATE FUNCTION make_trajectory(accum geometry, point geometry)
 RETURNS geometry AS
 $BODY$ DECLARE
-    result public.GEOMETRY;
+    result GEOMETRY;
 BEGIN
     IF (accum is null) THEN
         RETURN point;
@@ -86,7 +89,8 @@ BEGIN
 END;
 $BODY$
 LANGUAGE plpgsql VOLATILE
-COST 100;
+COST 100
+SET search_path = 'public';
 
 
 CREATE AGGREGATE make_trajectory(Geometry) (
@@ -107,7 +111,8 @@ BEGIN
 END;
 $$
 LANGUAGE plpgsql VOLATILE
-COST 100;
+COST 100
+SET search_path = 'public';
 
 CREATE FUNCTION make_point_or_shortest_line(pointa geometry, pointb geometry)
 RETURNS geometry AS
@@ -130,7 +135,8 @@ BEGIN
 END;
 $$
 LANGUAGE plpgsql VOLATILE
-COST 100;
+COST 100
+SET search_path = 'public';
 
 -- Function to create a multilinestring representing the line joining two points
 -- across the anti-meridian
@@ -139,12 +145,12 @@ CREATE FUNCTION make_line_crossing_antimeridian(pointa geometry, pointb geometry
   RETURNS geometry AS
 $BODY$
 DECLARE
-    pointashifted public.GEOMETRY;
-    pointbshifted public.GEOMETRY;
-    result public.GEOMETRY;
-    shifted public.GEOMETRY;
-    meridian_intersection public.GEOMETRY;
-    meridian_intersection_unshifted public.GEOMETRY;
+    pointashifted GEOMETRY;
+    pointbshifted GEOMETRY;
+    result GEOMETRY;
+    shifted GEOMETRY;
+    meridian_intersection GEOMETRY;
+    meridian_intersection_unshifted GEOMETRY;
 BEGIN
     SELECT INTO shifted ST_ShiftLongitude(st_makeline(pointa, pointb));
     SELECT INTO pointashifted ST_ShiftLongitude(pointa);
@@ -162,7 +168,8 @@ BEGIN
 END;
 $BODY$
 LANGUAGE plpgsql VOLATILE
-COST 100;
+COST 100
+SET search_path = 'public';
 
 -- Function to make the shortest line between two points splitting the line
 -- at the anti-meridian if that is the shortest path
@@ -172,7 +179,7 @@ CREATE FUNCTION make_shortest_line(pointa geometry, pointb geometry)
 RETURNS geometry AS
 $BODY$
 DECLARE
-    result public.GEOMETRY;
+    result GEOMETRY;
 BEGIN
 
     IF (NOT (is_valid_point(pointa) AND is_valid_point(pointb))) THEN
@@ -206,7 +213,8 @@ BEGIN
 END;
 $BODY$
 LANGUAGE plpgsql VOLATILE
-COST 100;
+COST 100
+SET search_path = 'public';
 
 -- Function to return a set of cells created by dividing a specified region into a a specified cell size 
 -- Refer http://gis.stackexchange.com/questions/16374/how-to-create-a-regular-polygon-grid-in-postgis
@@ -225,7 +233,8 @@ BEGIN
     );
 END
 $BODY$
-LANGUAGE plpgsql IMMUTABLE STRICT;
+LANGUAGE plpgsql IMMUTABLE STRICT
+SET search_path = 'public';
 
 -- Function to return a set of cells for the world divided up into a grid of a requested resolution 
 
@@ -239,7 +248,8 @@ BEGIN
     );
 END
 $BODY$
-LANGUAGE plpgsql IMMUTABLE STRICT;
+LANGUAGE plpgsql IMMUTABLE STRICT
+SET search_path = 'public';
 
 -- Function to return a bounding polygon of a column in a table to the specified spatial resolution
 -- Formed by dividing the world up into the specified cell size, identifying cells containing data 
@@ -269,7 +279,8 @@ BEGIN
     RETURN result;
 END;
 $BODY$
-LANGUAGE plpgsql; 
+LANGUAGE plpgsql
+SET search_path = 'public';
 
 -- Function to add ids to polygons in provided gml
 
@@ -295,7 +306,8 @@ BEGIN
     RETURN result;
 END;
 $BODY$
-  LANGUAGE plpgsql;
+LANGUAGE plpgsql
+SET search_path = 'public';
 
 -- Function to return a bounding polygon as gml 3
 -- Use CRS:84 with lon/lat ordering rather than default EPSG:4326 with incorrect lon/lat ordering
@@ -312,43 +324,50 @@ BEGIN
     RETURN replace(boundingPolygonAsGml, 'EPSG:4326', 'CRS:84');
 END;
 $BODY$
-LANGUAGE plpgsql; 
+LANGUAGE plpgsql
+SET search_path = 'public';
 
 -- Legacy from postgis-2.0/legacy.sql
 
 -- Deprecation in 1.2.3
 CREATE FUNCTION MakePoint(float8, float8)
     RETURNS geometry AS 'SELECT ST_MakePoint($1, $2)'
-    LANGUAGE 'sql' IMMUTABLE STRICT;
+    LANGUAGE 'sql' IMMUTABLE STRICT
+    SET search_path = 'public';
 
 
 -- Deprecation in 1.2.3
 CREATE FUNCTION MakePoint(float8, float8, float8)
     RETURNS geometry AS 'SELECT ST_MakePoint($1, $2, $3)'
-    LANGUAGE 'sql' IMMUTABLE STRICT;
+    LANGUAGE 'sql' IMMUTABLE STRICT
+    SET search_path = 'public';
 
 
 -- Deprecation in 1.2.3
 CREATE FUNCTION MakePoint(float8, float8, float8, float8)
     RETURNS geometry AS 'SELECT ST_MakePoint($1, $2, $3, $4)'
-    LANGUAGE 'sql' IMMUTABLE STRICT;
+    LANGUAGE 'sql' IMMUTABLE STRICT
+    SET search_path = 'public';
 
 
 -- Deprecation in 1.2.3
 CREATE FUNCTION GeomFromText(text, int4)
     RETURNS geometry AS 'SELECT ST_GeomFromText($1, $2)'
-    LANGUAGE 'sql' IMMUTABLE STRICT;
+    LANGUAGE 'sql' IMMUTABLE STRICT
+    SET search_path = 'public';
 
 
 -- Deprecation in 1.2.3
 CREATE FUNCTION GeomFromText(text)
     RETURNS geometry AS 'SELECT ST_GeomFromText($1)'
-    LANGUAGE 'sql' IMMUTABLE STRICT;
+    LANGUAGE 'sql' IMMUTABLE STRICT
+    SET search_path = 'public';
 
 
 -- Schema management
 CREATE FUNCTION exec(text) returns text
 language plpgsql volatile
+SET search_path = 'public'
 AS $f$
     BEGIN
     EXECUTE $1;
@@ -360,6 +379,7 @@ grant all on function exec(text) to public;
 
 create function drop_objects_in_schema( schema text ) returns void
 language plpgsql volatile
+SET search_path = 'public'
 as $$
     begin
     perform exec( 'drop view if exists '||n.nspname||'.'||o.relname||' cascade' )
@@ -404,5 +424,6 @@ create function database_activity() returns setof pg_catalog.pg_stat_activity
 language sql 
 volatile
 security definer
+SET search_path = 'public'
 as $$ SELECT * FROM pg_catalog.pg_stat_activity; $$;
 
