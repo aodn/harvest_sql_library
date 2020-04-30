@@ -4,24 +4,24 @@
 \echo Use "CREATE EXTENSION imos" to load this file. \quit
 
 -- Harvester
-ALTER EXTENSION "imos" ADD function getendtoken();
-ALTER EXTENSION "imos" ADD function format_name();
-ALTER EXTENSION "imos" ADD function add_point_shortest();
-ALTER EXTENSION "imos" ADD function make_trajectory();
-ALTER EXTENSION "imos" ADD function make_shortest_line();
+ALTER EXTENSION "imos" ADD function public.getendtoken();
+ALTER EXTENSION "imos" ADD function public.format_name();
+ALTER EXTENSION "imos" ADD function public.add_point_shortest();
+ALTER EXTENSION "imos" ADD function public.make_trajectory();
+ALTER EXTENSION "imos" ADD function public.make_shortest_line();
 
 -- Legacy
-ALTER EXTENSION "imos" ADD function MakePoint(float8, float8);
-ALTER EXTENSION "imos" ADD function MakePoint(float8, float8, float8);
-ALTER EXTENSION "imos" ADD function MakePoint(float8, float8, float8, float8);
+ALTER EXTENSION "imos" ADD function public.MakePoint(float8, float8);
+ALTER EXTENSION "imos" ADD function public.MakePoint(float8, float8, float8);
+ALTER EXTENSION "imos" ADD function public.MakePoint(float8, float8, float8, float8);
 
-ALTER EXTENSION "imos" ADD function GeomFromText(text, int4);
-ALTER EXTENSION "imos" ADD function GeomFromText(text);
+ALTER EXTENSION "imos" ADD function public.GeomFromText(text, int4);
+ALTER EXTENSION "imos" ADD function public.GeomFromText(text);
 
 -- Schema management
-ALTER EXTENSION "imos" ADD function exec(schema text);
-ALTER EXTENSION "imos" ADD function drop_objects_in_schema(schema text);
+ALTER EXTENSION "imos" ADD function public.exec(schema text);
+ALTER EXTENSION "imos" ADD function public.drop_objects_in_schema(schema text);
 
 -- Utility
-ALTER EXTENSION "imos" ADD function database_activity();
+ALTER EXTENSION "imos" ADD function public.database_activity();
 
