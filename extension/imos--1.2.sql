@@ -412,15 +412,16 @@ as $$
     where o.relkind = 'S'
     and n.nspname = $1;
 
-    perform exec( 'drop function if exists '||p.oid::regproc||'('||pg_get_function_identity_arguments( p.oid)||')'||' cascade' )
+    perform exec( 'drop aggregate if exists '||n.nspname||'.'||p.proname||'('||COALESCE(pg_get_function_identity_arguments(p.oid),'')||')'||' cascade' )
+    FROM pg_proc p
+    LEFT JOIN pg_namespace n ON p.pronamespace = n.oid
+    WHERE proisagg AND nspname = $1;
+
+    perform exec( 'drop function if exists '||n.nspname||'.'||p.proname||'('||COALESCE(pg_get_function_identity_arguments(p.oid),'')||')'||' cascade' )
     FROM pg_proc p
     left join pg_namespace n ON n.oid = p.pronamespace
     where n.nspname = $1;
-
-    perform exec('drop aggregate if exists '||p.oid::regproc||'('||pg_get_function_identity_arguments(p.oid)||')'||' cascade' )
-    FROM pg_proc p 
-    LEFT JOIN pg_namespace n ON p.pronamespace = n.oid 
-    WHERE proisagg AND nspname = $1;
+    
     end;
 $$;
 
