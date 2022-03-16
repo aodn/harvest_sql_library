@@ -1,7 +1,8 @@
-sql_library
-===========
+Harvester SQL library
+=
 
-Sql scripts and unit tests
+This is a collection of SQL scripts and unit tests for use in pipeline harvesters.
+
 
 Test Scripts
 ------------
