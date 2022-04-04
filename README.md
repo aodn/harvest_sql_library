@@ -2,7 +2,7 @@
 Sql scripts and unit tests
 
 ## Licensing
-This project is licensed under the terms of the GNU GPLv3 license. 
+This project is licensed under the terms of the GNU GPLv3 license.
 
 ## Test Scripts
 Unit testing scripts can be found in the test directory.  
