@@ -1,11 +1,10 @@
-sql_library
-===========
-
+# sql_library
 Sql scripts and unit tests
 
-Test Scripts
-------------
+## Licensing
+This project is licensed under the terms of the GNU GPLv3 license.
 
+## Test Scripts
 Unit testing scripts can be found in the test directory.  
 
 Unit testing is performed with pgTap
