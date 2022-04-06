@@ -3,10 +3,10 @@ Harvester SQL library
 
 This is a collection of SQL scripts and unit tests for use in pipeline harvesters.
 
+## Licensing
+This project is licensed under the terms of the GNU GPLv3 license.
 
-Test Scripts
-------------
-
+## Test Scripts
 Unit testing scripts can be found in the test directory.  
 
 Unit testing is performed with pgTap
